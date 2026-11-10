@@ -3,14 +3,19 @@
 import { useMemo, useState } from "react";
 import type { Dados, Divida } from "@/lib/tipos";
 import { simularQuitacao } from "@/lib/dividas";
-import { mesesParaTexto, novoId, reais } from "@/lib/formato";
-import type { Atualizar } from "./App";
+import { mesesParaTexto, reais } from "@/lib/formato";
+import type { Acoes } from "@/lib/armazenamento";
 
 const VAZIA = { nome: "", saldo: "", jurosMensal: "", parcelaMinima: "" };
 
-export function DividasTela({ dados, atualizar }: { dados: Dados; atualizar: Atualizar }) {
+export function DividasTela({ dados, acoes }: { dados: Dados; acoes: Acoes }) {
   const [form, setForm] = useState(VAZIA);
   const [abrirForm, setAbrirForm] = useState(dados.dividas.length === 0);
+  const [salvando, setSalvando] = useState(false);
+  // valor extra: salva ao sair do campo (não a cada tecla)
+  const [extra, setExtra] = useState(dados.valorExtraDividas ? String(dados.valorExtraDividas) : "");
+  const extraNum = Math.max(0, Number(extra) || 0);
+
 
   const total = dados.dividas.reduce((s, d) => s + d.saldo, 0);
   const minimos = dados.dividas.reduce((s, d) => s + d.parcelaMinima, 0);
@@ -18,28 +23,34 @@ export function DividasTela({ dados, atualizar }: { dados: Dados; atualizar: Atu
   const sim = useMemo(() => {
     if (!dados.dividas.length) return null;
     return {
-      avalanche: simularQuitacao(dados.dividas, dados.valorExtraDividas, "avalanche"),
-      bola: simularQuitacao(dados.dividas, dados.valorExtraDividas, "bolaDeNeve"),
+      avalanche: simularQuitacao(dados.dividas, extraNum, "avalanche"),
+      bola: simularQuitacao(dados.dividas, extraNum, "bolaDeNeve"),
       semExtra: simularQuitacao(dados.dividas, 0, "avalanche"),
     };
-  }, [dados.dividas, dados.valorExtraDividas]);
+  }, [dados.dividas, extraNum]);
 
-  function adicionar(e: React.FormEvent) {
+  async function adicionar(e: React.FormEvent) {
     e.preventDefault();
-    const d: Divida = {
-      id: novoId(),
+    const d: Omit<Divida, "id"> = {
       nome: form.nome.trim() || "Dívida",
       saldo: Number(form.saldo),
       jurosMensal: Number(form.jurosMensal),
       parcelaMinima: Number(form.parcelaMinima),
     };
     if (!(d.saldo > 0) || d.jurosMensal < 0 || !(d.parcelaMinima > 0)) return;
-    atualizar((x) => ({ ...x, dividas: [...x.dividas, d] }));
-    setForm(VAZIA);
-    setAbrirForm(false);
+    setSalvando(true);
+    try {
+      await acoes.adicionarDivida(d);
+      setForm(VAZIA);
+      setAbrirForm(false);
+    } catch {
+      /* erro já aparece no topo */
+    } finally {
+      setSalvando(false);
+    }
   }
 
-  const remover = (id: string) => atualizar((x) => ({ ...x, dividas: x.dividas.filter((d) => d.id !== id) }));
+  const remover = (id: string) => void acoes.removerDivida(id);
 
   const melhor = sim && sim.avalanche.jurosTotais <= sim.bola.jurosTotais ? "avalanche" : "bola";
 
@@ -149,7 +160,9 @@ export function DividasTela({ dados, atualizar }: { dados: Dados; atualizar: Atu
                 Cancelar
               </button>
             )}
-            <button className="botao primario">Adicionar</button>
+            <button className="botao primario" disabled={salvando}>
+              {salvando ? "Salvando…" : "Adicionar"}
+            </button>
           </div>
         </form>
       )}
@@ -164,9 +177,10 @@ export function DividasTela({ dados, atualizar }: { dados: Dados; atualizar: Atu
               inputMode="decimal"
               min="0"
               step="10"
-              value={dados.valorExtraDividas || ""}
+              value={extra}
               placeholder="0"
-              onChange={(e) => atualizar((d) => ({ ...d, valorExtraDividas: Math.max(0, Number(e.target.value)) }))}
+              onChange={(e) => setExtra(e.target.value)}
+              onBlur={() => extraNum !== dados.valorExtraDividas && void acoes.definirValorExtra(extraNum)}
             />
           </label>
 
@@ -194,7 +208,7 @@ export function DividasTela({ dados, atualizar }: { dados: Dados; atualizar: Atu
                   recomendada={melhor === "bola"}
                 />
               </div>
-              {dados.valorExtraDividas > 0 && sim.semExtra.quita && (
+              {extraNum > 0 && sim.semExtra.quita && (
                 <p className="sutil">
                   Pagando só os mínimos levaria {mesesParaTexto(sim.semExtra.meses)} e {reais(sim.semExtra.jurosTotais)}{" "}
                   de juros. Com o extra você economiza{" "}

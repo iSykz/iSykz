@@ -3,6 +3,7 @@ import { z } from "zod";
 import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
 import type Anthropic from "@anthropic-ai/sdk";
 import { claude, FALLBACK, MODELO, mensagemDeErro } from "@/lib/claude";
+import { consumirUsoIA } from "@/lib/supabase/acesso";
 import { CATEGORIAS, CATEGORIAS_DESPESA, CATEGORIAS_RECEITA } from "@/lib/tipos";
 
 export const runtime = "nodejs";
@@ -55,6 +56,11 @@ export async function POST(req: Request) {
   }
   const { texto, imagem, hoje } = corpo.data;
 
+  // Login + limite do plano grátis, contado no banco (não dá para burlar pelo navegador).
+  const acesso = await consumirUsoIA();
+  if (!acesso.ok) return acesso.resposta;
+  const uso = { usos: acesso.usos, plano: acesso.plano };
+
   const conteudo: Anthropic.Beta.BetaContentBlockParam[] = [];
   if (imagem) {
     conteudo.push({ type: "image", source: { type: "base64", media_type: imagem.tipo, data: imagem.dados } });
@@ -75,7 +81,7 @@ export async function POST(req: Request) {
     });
 
     if (resposta.stop_reason === "refusal" || !resposta.parsed_output) {
-      return NextResponse.json({ transacoes: [], observacao: "Não consegui entender. Tente escrever de outro jeito." });
+      return NextResponse.json({ transacoes: [], observacao: "Não consegui entender. Tente escrever de outro jeito.", ...uso });
     }
 
     const saida = resposta.parsed_output;
@@ -84,7 +90,7 @@ export async function POST(req: Request) {
       .filter((t) => Number.isFinite(t.valor) && t.valor > 0)
       .map((t) => ({ ...t, valor: Math.round(t.valor * 100) / 100, data: dataValida.test(t.data) ? t.data : hoje }));
 
-    return NextResponse.json({ transacoes, observacao: saida.observacao });
+    return NextResponse.json({ transacoes, observacao: saida.observacao, ...uso });
   } catch (e) {
     console.error(e);
     const { status, erro } = mensagemDeErro(e);

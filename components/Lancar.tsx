@@ -10,14 +10,14 @@ import {
   type Origem,
   type Sugestao,
 } from "@/lib/tipos";
-import { hojeISO, novoId, reais } from "@/lib/formato";
+import { hojeISO, reais } from "@/lib/formato";
 import { prepararImagem } from "@/lib/imagem";
 import { ouvir, vozDisponivel } from "@/lib/voz";
-import type { Atualizar } from "./App";
+import type { Acoes } from "@/lib/armazenamento";
 
 const EXEMPLOS = ["gastei 40 no mercado", "uber 23,50 ontem", "recebi 2.500 de salário", "paguei 180 da fatura do cartão"];
 
-export function Lancar({ dados, atualizar, aoConcluir }: { dados: Dados; atualizar: Atualizar; aoConcluir: () => void }) {
+export function Lancar({ dados, acoes, aoConcluir }: { dados: Dados; acoes: Acoes; aoConcluir: () => void }) {
   const [texto, setTexto] = useState("");
   const [ouvindo, setOuvindo] = useState(false);
   const [carregando, setCarregando] = useState<null | "texto" | "foto">(null);
@@ -51,9 +51,15 @@ export function Lancar({ dados, atualizar, aoConcluir }: { dados: Dados; atualiz
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...corpo, hoje: hojeISO() }),
       });
-      const json = (await r.json()) as { transacoes?: Sugestao[]; observacao?: string; erro?: string };
+      const json = (await r.json()) as {
+        transacoes?: Sugestao[];
+        observacao?: string;
+        erro?: string;
+        usos?: number | null;
+        plano?: "gratis" | "premium" | null;
+      };
       if (!r.ok) throw new Error(json.erro ?? "Falha ao interpretar.");
-      atualizar((d) => ({ ...d, plano: { ...d.plano, usosIA: d.plano.usosIA + 1 } }));
+      acoes.registrarUsoIA(json);
       setSugestoes(json.transacoes ?? []);
       setAviso(json.observacao ?? null);
     } catch (e) {
@@ -100,13 +106,19 @@ export function Lancar({ dados, atualizar, aoConcluir }: { dados: Dados; atualiz
     setSugestoes((s) => s.map((x, j) => (j === i ? { ...x, ...campo } : x)));
   }
 
-  function salvar() {
+  const [salvando, setSalvando] = useState(false);
+
+  async function salvar() {
     const validas = sugestoes.filter((s) => s.valor > 0 && s.descricao.trim());
     if (!validas.length) return;
-    atualizar((d) => ({
-      ...d,
-      transacoes: [...validas.map((s) => ({ ...s, id: novoId(), origem })), ...d.transacoes],
-    }));
+    setSalvando(true);
+    try {
+      await acoes.adicionarTransacoes(validas.map((s) => ({ ...s, descricao: s.descricao.trim(), origem })));
+    } catch {
+      setSalvando(false);
+      return; // a mensagem de erro aparece no topo; as sugestões continuam na tela
+    }
+    setSalvando(false);
     setSugestoes([]);
     setTexto("");
     setAviso(null);
@@ -254,7 +266,7 @@ export function Lancar({ dados, atualizar, aoConcluir }: { dados: Dados; atualiz
             <button className="botao fantasma" onClick={() => setSugestoes([])} type="button">
               Cancelar
             </button>
-            <button className="botao primario" onClick={salvar} type="button">
+            <button className="botao primario" onClick={salvar} type="button" disabled={salvando}>
               Salvar {sugestoes.length > 1 ? `${sugestoes.length} lançamentos` : ""} ·{" "}
               {reais(sugestoes.reduce((t, s) => t + (s.valor || 0), 0))}
             </button>

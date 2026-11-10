@@ -118,7 +118,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 /* formulários */
 label { display: flex; flex-direction: column; gap: 4px; font-size: 0.85rem; color: var(--sutil); }
 input, select, textarea {
-  width: 100%; border: 1px solid var(--borda); background: var(--fundo);
+  width: 100%; border: 1px solid var(--borda); background: var(--fundo); color: var(--texto);
   border-radius: 10px; padding: 10px 12px; font-size: 1rem; min-height: 44px;
 }
 textarea { resize: vertical; }
@@ -203,3 +203,26 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--primaria); 
 @media (min-width: 600px) {
   .abas { border: 1px solid var(--borda); border-bottom: none; border-radius: 16px 16px 0 0; }
 }
+
+/* conta / login */
+.topo { position: sticky; }
+.topo-direita { display: flex; align-items: center; gap: 8px; }
+.botao-conta {
+  width: 34px; height: 34px; border-radius: 50%; border: none; cursor: pointer;
+  background: var(--primaria); color: var(--primaria-texto); font-weight: 700;
+}
+.menu-conta {
+  position: absolute; right: 16px; top: 58px; width: 240px; z-index: 20;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.menu-conta .email { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 6px; }
+.alerta.ok { background: var(--cartao); border-color: var(--primaria); }
+.alerta.faixa { flex-direction: row; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; }
+.entrar {
+  max-width: 420px; margin: 0 auto; padding: 56px 16px 32px;
+  display: flex; flex-direction: column; gap: 16px; align-items: stretch;
+}
+.entrar > svg { align-self: center; color: var(--texto); }
+.entrar-slogan { text-align: center; color: var(--sutil); margin-top: -6px; margin-bottom: 8px; }
+.campo-codigo { font-size: 1.6rem; letter-spacing: 0.4em; text-align: center; font-variant-numeric: tabular-nums; }
+.centro { text-align: center; }

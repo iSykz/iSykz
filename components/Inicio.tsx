@@ -4,7 +4,8 @@ import { useMemo, useState } from "react";
 import type { Dados } from "@/lib/tipos";
 import { gerarAlertas, resumoDoMes } from "@/lib/analise";
 import { dataCurta, mesISO, nomeMes, reais } from "@/lib/formato";
-import type { Aba, Atualizar } from "./App";
+import type { Acoes } from "@/lib/armazenamento";
+import type { Aba } from "./App";
 
 const ICONE_ORIGEM = { texto: "⌨", voz: "🎙", foto: "📷", manual: "✎" } as const;
 
@@ -13,7 +14,7 @@ function deslocarMes(mes: string, delta: number): string {
   return mesISO(new Date(a, m - 1 + delta, 1));
 }
 
-export function Inicio({ dados, atualizar, irPara }: { dados: Dados; atualizar: Atualizar; irPara: (a: Aba) => void }) {
+export function Inicio({ dados, acoes, irPara }: { dados: Dados; acoes: Acoes; irPara: (a: Aba) => void }) {
   const [mes, setMes] = useState(mesISO());
   const mesAtual = mes === mesISO();
   const resumo = useMemo(() => resumoDoMes(dados.transacoes, mes), [dados.transacoes, mes]);
@@ -25,8 +26,7 @@ export function Inicio({ dados, atualizar, irPara }: { dados: Dados; atualizar: 
   const categorias = Object.entries(resumo.porCategoria).sort((a, b) => b[1] - a[1]);
   const maior = categorias[0]?.[1] ?? 1;
 
-  const remover = (id: string) =>
-    atualizar((d) => ({ ...d, transacoes: d.transacoes.filter((t) => t.id !== id) }));
+  const remover = (id: string) => void acoes.removerTransacao(id);
 
   return (
     <div className="pilha">

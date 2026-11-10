@@ -4,9 +4,9 @@ import { useMemo, useState } from "react";
 import { PRECO_PREMIUM, type Dados } from "@/lib/tipos";
 import { resumoDoMes } from "@/lib/analise";
 import { mesISO } from "@/lib/formato";
-import type { Atualizar } from "./App";
+import type { Acoes } from "@/lib/armazenamento";
 
-export function Coach({ dados, atualizar }: { dados: Dados; atualizar: Atualizar }) {
+export function Coach({ dados, acoes }: { dados: Dados; acoes: Acoes }) {
   const [pergunta, setPergunta] = useState("");
   const [resposta, setResposta] = useState<string | null>(null);
   const [carregando, setCarregando] = useState(false);
@@ -14,6 +14,18 @@ export function Coach({ dados, atualizar }: { dados: Dados; atualizar: Atualizar
   const premium = dados.plano.tipo === "premium";
   const resumo = useMemo(() => resumoDoMes(dados.transacoes, mesISO()), [dados.transacoes]);
   const semDados = resumo.transacoes.length === 0 && dados.dividas.length === 0;
+
+  async function mudarPlano(tipo: "gratis" | "premium") {
+    setErro(null);
+    setCarregando(true);
+    try {
+      await acoes.definirPlano(tipo);
+    } catch (e) {
+      setErro(e instanceof Error ? e.message : "Não consegui mudar o plano.");
+    } finally {
+      setCarregando(false);
+    }
+  }
 
   async function perguntar() {
     setCarregando(true);
@@ -66,7 +78,8 @@ export function Coach({ dados, atualizar }: { dados: Dados; atualizar: Atualizar
           </p>
           <button
             className="botao primario largo"
-            onClick={() => atualizar((d) => ({ ...d, plano: { ...d.plano, tipo: "premium" } }))}
+            onClick={() => mudarPlano("premium")}
+            disabled={carregando}
           >
             Ativar Premium (demonstração)
           </button>
@@ -115,7 +128,7 @@ export function Coach({ dados, atualizar }: { dados: Dados; atualizar: Atualizar
 
       <button
         className="link sutil"
-        onClick={() => atualizar((d) => ({ ...d, plano: { ...d.plano, tipo: "gratis" } }))}
+        onClick={() => mudarPlano("gratis")}
       >
         Voltar ao plano grátis (teste)
       </button>

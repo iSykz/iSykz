@@ -4,19 +4,13 @@ import { useMemo } from "react";
 import { CATEGORIAS_DESPESA, type Categoria, type Dados } from "@/lib/tipos";
 import { resumoDoMes } from "@/lib/analise";
 import { mesISO, reais } from "@/lib/formato";
-import type { Atualizar } from "./App";
+import type { Acoes } from "@/lib/armazenamento";
 
-export function OrcamentoTela({ dados, atualizar }: { dados: Dados; atualizar: Atualizar }) {
+export function OrcamentoTela({ dados, acoes }: { dados: Dados; acoes: Acoes }) {
   const resumo = useMemo(() => resumoDoMes(dados.transacoes, mesISO()), [dados.transacoes]);
   const totalLimites = Object.values(dados.orcamento).reduce((s, v) => s + (v ?? 0), 0);
 
-  const definir = (cat: Categoria, valor: number) =>
-    atualizar((d) => {
-      const orcamento = { ...d.orcamento };
-      if (valor > 0) orcamento[cat] = valor;
-      else delete orcamento[cat];
-      return { ...d, orcamento };
-    });
+  const definir = (cat: Categoria, valor: number) => void acoes.definirOrcamento(cat, valor);
 
   return (
     <div className="pilha">

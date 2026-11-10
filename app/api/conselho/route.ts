@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { exigirPremium } from "@/lib/supabase/acesso";
 import { claude, FALLBACK, MODELO, mensagemDeErro } from "@/lib/claude";
 
 export const runtime = "nodejs";
@@ -33,6 +34,9 @@ export async function POST(req: Request) {
   if (!corpo.success) return NextResponse.json({ erro: "Dados inválidos." }, { status: 400 });
 
   const { pergunta, ...resumo } = corpo.data;
+
+  const acesso = await exigirPremium();
+  if (!acesso.ok) return acesso.resposta;
 
   try {
     const resposta = await claude.beta.messages.create({
