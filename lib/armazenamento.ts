@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import type { Dados } from "./tipos";
 import { mesISO } from "./formato";
 
-const CHAVE = "grana:v1";
+const CHAVE = "zerou:v1";
 
 const inicial = (): Dados => ({
   transacoes: [],

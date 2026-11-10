@@ -2,10 +2,10 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Grana — finanças com IA",
+  title: "Zerou — do vermelho ao zero",
   description: "Fale, digite ou fotografe seus gastos. A IA organiza, avisa quando você gasta demais e ajuda a sair das dívidas.",
   manifest: "/manifest.webmanifest",
-  appleWebApp: { capable: true, title: "Grana", statusBarStyle: "default" },
+  appleWebApp: { capable: true, title: "Zerou", statusBarStyle: "default" },
 };
 
 export const viewport: Viewport = {

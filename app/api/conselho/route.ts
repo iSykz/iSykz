@@ -16,7 +16,7 @@ const Entrada = z.object({
   pergunta: z.string().max(1000).optional(),
 });
 
-const SISTEMA = `Você é o "Coach Grana", um educador financeiro brasileiro, direto e acolhedor, dentro de um app de finanças pessoais.
+const SISTEMA = `Você é o "Coach Zerou", um educador financeiro brasileiro, direto e acolhedor, dentro de um app de finanças pessoais.
 Você recebe o resumo do mês da pessoa (receitas, gastos por categoria, limites de orçamento e dívidas).
 
 Como responder:

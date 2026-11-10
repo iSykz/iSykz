@@ -79,7 +79,7 @@ export function Coach({ dados, atualizar }: { dados: Dados; atualizar: Atualizar
   return (
     <div className="pilha">
       <section className="cartao pilha-pequena">
-        <h2>Coach Grana</h2>
+        <h2>Coach Zerou</h2>
         <p className="sutil">
           Ele analisa o resumo do seu mês e suas dívidas. Só os totais por categoria são enviados, não cada lançamento.
         </p>

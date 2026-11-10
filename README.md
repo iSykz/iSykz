@@ -1,4 +1,6 @@
-# Grana: finanças pessoais com IA
+# Zerou: finanças pessoais com IA
+
+![Zerou](public/marca/zerou-logo.svg)
 
 Fale, digite ou fotografe seus gastos. A IA organiza tudo, avisa quando você está gastando demais e monta um plano para sair das dívidas.
 

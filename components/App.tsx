@@ -7,6 +7,7 @@ import { Lancar } from "./Lancar";
 import { OrcamentoTela } from "./OrcamentoTela";
 import { DividasTela } from "./DividasTela";
 import { Coach } from "./Coach";
+import { Logo } from "./Logo";
 
 type Aba = "inicio" | "lancar" | "orcamento" | "dividas" | "coach";
 
@@ -27,7 +28,9 @@ export function App() {
   return (
     <>
       <header className="topo">
-        <span className="marca">Grana</span>
+        <span className="marca">
+          <Logo altura={28} />
+        </span>
         <span className={`selo ${dados.plano.tipo}`}>{dados.plano.tipo === "premium" ? "Premium" : "Grátis"}</span>
       </header>
 
