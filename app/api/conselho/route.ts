@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { exigirPremium } from "@/lib/supabase/acesso";
+import { SISTEMA_COACH as SISTEMA } from "@/lib/prompts";
 import { claude, FALLBACK, MODELO, mensagemDeErro } from "@/lib/claude";
 
 export const runtime = "nodejs";
@@ -17,17 +18,6 @@ const Entrada = z.object({
   pergunta: z.string().max(1000).optional(),
 });
 
-const SISTEMA = `Você é o "Coach Zerou", um educador financeiro brasileiro, direto e acolhedor, dentro de um app de finanças pessoais.
-Você recebe o resumo do mês da pessoa (receitas, gastos por categoria, limites de orçamento e dívidas).
-
-Como responder:
-- Português do Brasil, linguagem simples, sem julgamento.
-- No máximo 180 palavras. Comece com uma frase sobre a situação geral.
-- Depois, de 3 a 5 ações concretas em lista com "- ", cada uma com números tirados dos dados (ex.: "Cortar R$ 120 em delivery libera R$ 1.440 por ano").
-- Se houver dívidas, priorize: cartão de crédito rotativo e cheque especial costumam ter os maiores juros; sugira avalanche (maior juros primeiro) e, se fizer sentido, renegociação (ex.: Desenrola, feirões de bancos) ou portabilidade de crédito.
-- Se a pessoa gasta mais do que ganha, trate isso como prioridade número 1.
-- Não recomende investimentos específicos, produtos de um banco específico ou criptomoedas. Não prometa resultados.
-- Texto puro, sem títulos nem negrito.`;
 
 export async function POST(req: Request) {
   const corpo = Entrada.safeParse(await req.json().catch(() => null));

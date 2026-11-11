@@ -45,6 +45,14 @@ npm run dev                  # http://localhost:3000
    - Para produção, configure um envio de e-mail próprio (SMTP, por exemplo Resend). O envio padrão do Supabase tem limite baixo por hora.
 2. **Vercel**: importe o repositório e adicione as variáveis do `.env.example`. Não use `PREMIUM_DEMO` em produção.
 
+## Versão de teste (link do claude.ai)
+
+`npm run demo:gerar` gera `demo/zerou-teste.html`, uma página única com o mesmo app, publicável como Artifact no claude.ai. Lá não existe servidor, então três peças são trocadas (pasta `demo/`):
+
+- **IA:** a capacidade `sample`, que usa a conta Claude de quem testa, com os mesmos prompts de `lib/prompts.ts`
+- **Microfone:** a capacidade `dictation`
+- **Dados:** a capacidade `db`, num documento privado de cada pessoa (sem login próprio)
+
 ## Segurança dos dados
 
 - **Row Level Security** em todas as tabelas: cada conta só lê e altera as próprias linhas.

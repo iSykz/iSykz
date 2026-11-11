@@ -4,7 +4,8 @@ import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
 import type Anthropic from "@anthropic-ai/sdk";
 import { claude, FALLBACK, MODELO, mensagemDeErro } from "@/lib/claude";
 import { consumirUsoIA } from "@/lib/supabase/acesso";
-import { CATEGORIAS, CATEGORIAS_DESPESA, CATEGORIAS_RECEITA } from "@/lib/tipos";
+import { CATEGORIAS } from "@/lib/tipos";
+import { SISTEMA_LANCAMENTOS as SISTEMA } from "@/lib/prompts";
 
 export const runtime = "nodejs";
 
@@ -32,22 +33,6 @@ const Entrada = z.object({
   hoje: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
 });
 
-const SISTEMA = `Você é o motor de lançamentos de um app brasileiro de finanças pessoais.
-Transforme o que a pessoa enviou (frase digitada, frase falada transcrita ou foto de recibo/nota fiscal/comprovante Pix) em lançamentos financeiros.
-
-Regras:
-- "valor" é sempre positivo, em reais (ex.: "40 conto" = 40; "1,5 mil" = 1500; "R$ 12,90" = 12.9).
-- "tipo": "despesa" para gastos/pagamentos; "receita" para salário, Pix recebido, venda, etc.
-- Categorias de despesa: ${CATEGORIAS_DESPESA.join(", ")}.
-- Categorias de receita: ${CATEGORIAS_RECEITA.join(", ")}.
-- Use "Mercado" para supermercado/feira/padaria de compras do mês; "Alimentação" para restaurante, lanche, delivery, iFood.
-- Pagamento de fatura, empréstimo ou parcela de dívida vai em "Dívidas".
-- "data" no formato AAAA-MM-DD. Interprete datas relativas ("ontem", "sexta") a partir da data de hoje informada. Sem data, use hoje.
-- "descricao": curta e clara, com o nome do estabelecimento quando houver (ex.: "Mercado Extra", "Uber para o trabalho").
-- Uma frase pode ter vários lançamentos ("gastei 30 de uber e 50 no almoço" = 2).
-- Foto de recibo/nota: gere UM lançamento com o valor TOTAL pago (não liste item por item), usando a data impressa se estiver legível.
-- Se não houver nada financeiro ou o valor estiver ilegível, devolva a lista vazia.
-- "observacao": uma frase curta em português para a pessoa (ex.: "Registrei 2 gastos." ou o motivo de não ter registrado nada).`;
 
 export async function POST(req: Request) {
   const corpo = Entrada.safeParse(await req.json().catch(() => null));
