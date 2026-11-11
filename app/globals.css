@@ -163,7 +163,7 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--primaria); 
 .limite { padding: 12px 0; border-bottom: 1px solid var(--borda); display: flex; flex-direction: column; gap: 6px; }
 .limite:last-child { border-bottom: none; }
 .limite-linha { display: flex; align-items: center; gap: 8px; }
-.prefixo { color: var(--sutil); font-size: 0.9rem; }
+.limite-linha .campo-numero { flex: 1; }
 
 /* dívidas */
 .comparacao { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -226,3 +226,66 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--primaria); 
 .entrar-slogan { text-align: center; color: var(--sutil); margin-top: -6px; margin-bottom: 8px; }
 .campo-codigo { font-size: 1.6rem; letter-spacing: 0.4em; text-align: center; font-variant-numeric: tabular-nums; }
 .centro { text-align: center; }
+
+/* ---------- campos numéricos (aceitam vírgula) ---------- */
+.campo-rotulado { display: flex; flex-direction: column; gap: 4px; font-size: 0.85rem; color: var(--sutil); }
+.campo-numero {
+  display: flex; align-items: center; gap: 6px;
+  border: 1px solid var(--borda); background: var(--fundo); border-radius: 10px; padding: 0 12px;
+}
+.campo-numero:focus-within { outline: 2px solid var(--primaria); outline-offset: -1px; }
+.campo-numero.com-erro { border-color: var(--negativo); }
+.campo-numero input {
+  border: none; background: none; padding: 10px 0; min-height: 44px; width: 100%; outline: none; border-radius: 0;
+  font-variant-numeric: tabular-nums;
+}
+.afixo { color: var(--sutil); font-size: 0.9rem; flex-shrink: 0; }
+.msg-erro { color: var(--negativo); font-size: 0.78rem; }
+.msg-dica { color: var(--sutil); font-size: 0.78rem; }
+
+/* ---------- blocos reutilizados ---------- */
+.linha-tripla {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.linha-tripla > div { display: flex; flex-direction: column; min-width: 0; }
+.espaco-topo { margin-top: 12px; }
+.botao.pequeno { min-height: 36px; padding: 6px 12px; font-size: 0.85rem; border-radius: 10px; }
+.chip.ativo { background: var(--primaria); color: var(--primaria-texto); border-color: transparent; }
+.barra-cheia.neutra { background: var(--sutil); opacity: 0.5; }
+.caixa-marcar { flex-direction: row; align-items: center; gap: 8px; color: var(--texto); font-size: 0.9rem; }
+.caixa-marcar input { width: 20px; height: 20px; min-height: 0; flex-shrink: 0; accent-color: var(--primaria); }
+.caixa-ajuda {
+  border: 1px solid var(--borda); border-radius: 12px; padding: 14px;
+  display: flex; flex-direction: column; gap: 8px; font-size: 0.9rem;
+}
+.caixa-ajuda ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+.caixa-sugestao {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;
+  border: 1px dashed var(--borda); border-radius: 12px; padding: 12px; font-size: 0.88rem; color: var(--sutil);
+}
+
+/* ---------- dívidas ---------- */
+.divida { padding: 12px 0; border-bottom: 1px solid var(--borda); display: flex; flex-direction: column; gap: 8px; }
+.divida:last-child { border-bottom: none; }
+.divida-topo { display: flex; align-items: flex-start; gap: 10px; }
+.divida-topo .item-texto { flex: 1; }
+.divida-saldo { font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
+.divida-acoes { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.confirmar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.pagamento { border: 1px solid var(--primaria); border-radius: 12px; padding: 12px; }
+.etiqueta-inline {
+  margin-left: 8px; font-size: 0.68rem; font-weight: 700; padding: 2px 8px; border-radius: 99px;
+  background: var(--primaria); color: var(--primaria-texto); white-space: nowrap;
+}
+.estrategia {
+  font: inherit; color: inherit; text-align: left; cursor: pointer; background: var(--cartao);
+  align-items: flex-start;
+}
+.estrategia.escolhida { border-color: var(--primaria); border-width: 2px; }
+.estrategia.recomendada:not(.escolhida) { border-color: var(--borda); border-width: 1px; }
+
+.divida-topo .item-texto > span:first-child {
+  white-space: normal; overflow: visible; display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+}
+.divida-topo .etiqueta-inline { margin-left: 0; }

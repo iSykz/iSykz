@@ -148,6 +148,7 @@ export interface Acoes {
   adicionarTransacoes: (lista: Omit<Transacao, "id">[]) => Promise<void>;
   removerTransacao: (id: string) => Promise<void>;
   adicionarDivida: (d: Omit<Divida, "id">) => Promise<void>;
+  atualizarDivida: (id: string, mudanca: Partial<Omit<Divida, "id">>) => Promise<void>;
   removerDivida: (id: string) => Promise<void>;
   definirOrcamento: (cat: Categoria, valor: number) => Promise<void>;
   definirValorExtra: (v: number) => Promise<void>;
@@ -277,6 +278,17 @@ export function useDados() {
       }
       setErro(null);
       setDados((d) => ({ ...d, dividas: [...d.dividas, deDivida(data as LinhaDivida)] }));
+    },
+    atualizarDivida: (id, mudanca) => {
+      const linha: Record<string, unknown> = {};
+      if (mudanca.nome !== undefined) linha.nome = mudanca.nome.slice(0, 80);
+      if (mudanca.saldo !== undefined) linha.saldo = mudanca.saldo;
+      if (mudanca.jurosMensal !== undefined) linha.juros_mensal = mudanca.jurosMensal;
+      if (mudanca.parcelaMinima !== undefined) linha.parcela_minima = mudanca.parcelaMinima;
+      return salvar(
+        (d) => ({ ...d, dividas: d.dividas.map((x) => (x.id === id ? { ...x, ...mudanca } : x)) }),
+        () => supabaseNavegador().from("dividas").update(linha).eq("id", id),
+      );
     },
     removerDivida: (id) =>
       salvar(

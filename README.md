@@ -12,8 +12,9 @@ Fale, digite ou fotografe seus gastos. A IA organiza tudo, avisa quando você es
 | **Lançar por voz** | Botão 🎙 usa o reconhecimento de voz do navegador (pt-BR) e manda o texto para a IA |
 | **Foto do recibo** | 📷 abre a câmera; a IA lê a nota/comprovante Pix e extrai valor total, local e data |
 | **Confirmar antes de salvar** | A pessoa revisa e edita o que a IA entendeu |
-| **Alertas de gasto** | Limite por categoria: avisa em 80%, ao estourar e quando o *ritmo* do mês indica que vai estourar |
-| **Plano de dívidas** | Compara avalanche (maior juros primeiro) × bola de neve (menor saldo primeiro): meses até quitar, juros totais, ordem de quitação e economia com o valor extra |
+| **Alertas de gasto** | Limite por categoria: avisa em 80%, ao estourar e quando o *ritmo* do mês indica que vai estourar (só a partir do dia 8, para não dar alarme falso) |
+| **Limites** | Sugere limites pela sua média dos últimos meses, mostra sobra prevista, quanto resta por dia e avisa se os limites passam a renda |
+| **Plano de dívidas** | Tipos prontos com taxa estimada, taxa anual equivalente, aviso quando a parcela não cobre os juros, registrar pagamento, editar, compara avalanche × bola de neve e indica a renegociação (Lei 14.181/2021) quando a dívida não cabe na renda |
 | **Coach com IA** (Premium) | Diagnóstico do mês com ações concretas em reais; só os totais por categoria são enviados |
 | **Login sem senha** | Código de 6 dígitos por e-mail (funciona bem no app instalado no celular) |
 | **Dados na nuvem** | Supabase (Postgres): mesmos dados no celular e no computador; cada pessoa só acessa os próprios dados |
@@ -44,6 +45,10 @@ npm run dev                  # http://localhost:3000
    - Em *Authentication > URL Configuration*, coloque o endereço do site.
    - Para produção, configure um envio de e-mail próprio (SMTP, por exemplo Resend). O envio padrão do Supabase tem limite baixo por hora.
 2. **Vercel**: importe o repositório e adicione as variáveis do `.env.example`. Não use `PREMIUM_DEMO` em produção.
+
+## Testes
+
+`npm run testar` roda o teste de ponta a ponta num navegador de verdade (precisa do Supabase local e do app no ar). Ele cobre login, lançamentos, limites, dívidas, pagamento, quitação e persistência.
 
 ## Versão de teste (link do claude.ai)
 

@@ -40,6 +40,7 @@ export interface Acoes {
   adicionarTransacoes: (lista: Omit<Transacao, "id">[]) => Promise<void>;
   removerTransacao: (id: string) => Promise<void>;
   adicionarDivida: (d: Omit<Divida, "id">) => Promise<void>;
+  atualizarDivida: (id: string, mudanca: Partial<Omit<Divida, "id">>) => Promise<void>;
   removerDivida: (id: string) => Promise<void>;
   definirOrcamento: (cat: Categoria, valor: number) => Promise<void>;
   definirValorExtra: (v: number) => Promise<void>;
@@ -122,6 +123,8 @@ export function useDados() {
       setDados((d) => ({ ...d, transacoes: [...lista.map((t) => ({ ...t, id: id() })), ...d.transacoes] })),
     removerTransacao: async (x) => setDados((d) => ({ ...d, transacoes: d.transacoes.filter((t) => t.id !== x) })),
     adicionarDivida: async (div) => setDados((d) => ({ ...d, dividas: [...d.dividas, { ...div, id: id() }] })),
+    atualizarDivida: async (x, mudanca) =>
+      setDados((d) => ({ ...d, dividas: d.dividas.map((v) => (v.id === x ? { ...v, ...mudanca } : v)) })),
     removerDivida: async (x) => setDados((d) => ({ ...d, dividas: d.dividas.filter((v) => v.id !== x) })),
     definirOrcamento: async (cat, valor) =>
       setDados((d) => {

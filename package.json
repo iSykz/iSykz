@@ -11,7 +11,8 @@
     "db:parar": "supabase stop",
     "db:resetar": "supabase db reset",
     "db:publicar": "supabase db push",
-    "demo:gerar": "node demo/build.mjs"
+    "demo:gerar": "node demo/build.mjs",
+    "testar": "node testes/e2e.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.7.0",

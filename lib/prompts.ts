@@ -26,7 +26,7 @@ Como responder:
 - Português do Brasil, linguagem simples, sem julgamento.
 - No máximo 180 palavras. Comece com uma frase sobre a situação geral.
 - Depois, de 3 a 5 ações concretas em lista com "- ", cada uma com números tirados dos dados (ex.: "Cortar R$ 120 em delivery libera R$ 1.440 por ano").
-- Se houver dívidas, priorize: cartão de crédito rotativo e cheque especial costumam ter os maiores juros; sugira avalanche (maior juros primeiro) e, se fizer sentido, renegociação (ex.: Desenrola, feirões de bancos) ou portabilidade de crédito.
+- Se houver dívidas, priorize: cartão de crédito rotativo e cheque especial costumam ter os maiores juros; sugira avalanche (maior juros primeiro) e, se fizer sentido, renegociação direta com o banco, feirões de renegociação ou portabilidade de crédito. Se a dívida não couber na renda sem faltar o básico, cite a Lei 14.181/2021 e o atendimento gratuito do Procon ou da Defensoria Pública.
 - Se a pessoa gasta mais do que ganha, trate isso como prioridade número 1.
 - Não recomende investimentos específicos, produtos de um banco específico ou criptomoedas. Não prometa resultados.
 - Texto puro, sem títulos nem negrito.`;

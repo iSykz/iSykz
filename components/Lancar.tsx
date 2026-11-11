@@ -14,6 +14,7 @@ import { hojeISO, reais } from "@/lib/formato";
 import { prepararImagem } from "@/lib/imagem";
 import { ouvir, vozDisponivel } from "@/lib/voz";
 import type { Acoes } from "@/lib/armazenamento";
+import { CampoNumero } from "./Campos";
 
 const EXEMPLOS = ["gastei 40 no mercado", "uber 23,50 ontem", "recebi 2.500 de salário", "paguei 180 da fatura do cartão"];
 
@@ -230,17 +231,13 @@ export function Lancar({ dados, acoes, aoConcluir }: { dados: Dados; acoes: Acoe
                   <input value={s.descricao} onChange={(e) => editar(i, { descricao: e.target.value })} />
                 </label>
                 <div className="grade-2">
-                  <label>
-                    Valor (R$)
-                    <input
-                      type="number"
-                      inputMode="decimal"
-                      step="0.01"
-                      min="0"
-                      value={s.valor || ""}
-                      onChange={(e) => editar(i, { valor: Number(e.target.value) })}
-                    />
-                  </label>
+                  <CampoNumero
+                    rotulo="Valor"
+                    prefixo="R$"
+                    valor={s.valor}
+                    aoMudar={(v) => editar(i, { valor: v })}
+                    erro={s.valor > 0 ? null : "Informe o valor."}
+                  />
                   <label>
                     Data
                     <input type="date" value={s.data} onChange={(e) => editar(i, { data: e.target.value })} />

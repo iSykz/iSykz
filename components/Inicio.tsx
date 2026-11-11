@@ -90,8 +90,11 @@ export function Inicio({ dados, acoes, irPara }: { dados: Dados; acoes: Acoes; i
               <h2>Para onde foi o dinheiro</h2>
               <ul className="barras">
                 {categorias.map(([cat, v]) => {
-                  const limite = dados.orcamento[cat as keyof typeof dados.orcamento];
-                  const estourou = limite ? v > limite : false;
+                  const limite = dados.orcamento[cat as keyof typeof dados.orcamento] ?? 0;
+                  // Com limite, a barra mede o quanto do limite já foi usado.
+                  // Sem limite, mede o tamanho do gasto perto da maior categoria.
+                  const pct = limite ? (v / limite) * 100 : (v / maior) * 100;
+                  const cor = !limite ? "neutra" : pct >= 100 ? "estourou" : pct >= 80 ? "quase" : "";
                   return (
                     <li key={cat}>
                       <div className="barra-topo">
@@ -103,10 +106,15 @@ export function Inicio({ dados, acoes, irPara }: { dados: Dados; acoes: Acoes; i
                       </div>
                       <div className="barra">
                         <div
-                          className={`barra-cheia ${estourou ? "estourou" : ""}`}
-                          style={{ width: `${Math.max(3, (v / maior) * 100)}%` }}
+                          className={`barra-cheia ${cor}`}
+                          style={{ width: `${v > 0 ? Math.max(3, Math.min(100, pct)) : 0}%` }}
                         />
                       </div>
+                      {limite > 0 && (
+                        <span className="sutil pequeno">
+                          {v > limite ? `estourou em ${reais(v - limite)}` : `${Math.round(pct)}% do limite`}
+                        </span>
+                      )}
                     </li>
                   );
                 })}
